@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Registration Form</title>
+<style>
+  body {
+    background-color: #e8f0fe;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 30px 15px;
+  }
+  .container {
+    max-width: 460px;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 25px 30px;
+    border: 2px solid #1a73e8;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  h2 {
+    text-align: center;
+    color: #1a73e8;
+    margin-top: 0;
+  }
+  .form-group {
+    margin-bottom: 18px;
+  }
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #333;
+  }
+  input[type="text"],
+  input[type="date"],
+  input[type="tel"],
+  input[type="password"],
+  input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 15px;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  input:focus {
+    outline: none;
+    border-color: #1a73e8;
+  }
+  input.invalid {
+    border-color: #d93025;
+    background-color: #fdecea;
+  }
+  .error {
+    color: #d93025;
+    font-size: 13px;
+    margin-top: 5px;
+    min-height: 16px;
+  }
+  button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #1a73e8;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #1558b0;
+  }
+  #successMessage {
+    display: none;
+    margin-top: 18px;
+    padding: 12px;
+    background-color: #e6f4ea;
+    color: #188038;
+    border: 1px solid #188038;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Student Registration</h2>
+  <form id="regForm" novalidate>
+    <div class="form-group">
+      <label for="fullName">Full Name</label>
+      <input type="text" id="fullName" name="fullName" placeholder="e.g. John Doe">
+      <div class="error" id="nameError"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="dob">Date of Birth</label>
+      <input type="date" id="dob" name="dob">
+      <div class="error" id="dobError"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="mobile">Mobile Number</label>
+      <input type="tel" id="mobile" name="mobile" placeholder="10 digits e.g. 0712345678" maxlength="15">
+      <div class="error" id="mobileError"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="At least 8 characters">
+      <div class="error" id="passwordError"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="certificate">Certificate Upload</label>
+      <input type="file" id="certificate" name="certificate" accept=".pdf,.jpg,.jpeg,.png">
+      <div class="error" id="certError"></div>
+    </div>
+
+    <button type="submit">Submit</button>
+    <div id="successMessage">Registration successful! All details are valid.</div>
+  </form>
+</div>
+
+<script>
+  const form = document.getElementById("regForm");
+
+  function setError(inputId, errorId, message) {
+    const input = document.getElementById(inputId);
+    document.getElementById(errorId).textContent = message;
+    if (message) input.classList.add("invalid");
+    else input.classList.remove("invalid");
+    return message === "";
+  }
+
+  function validateName() {
+    const v = document.getElementById("fullName").value.trim();
+    if (v === "") return setError("fullName", "nameError", "Full name is required.");
+    if (!/^[A-Za-z ]+$/.test(v)) return setError("fullName", "nameError", "Name must contain letters and spaces only.");
+    return setError("fullName", "nameError", "");
+  }
+
+  function validateDob() {
+    const v = document.getElementById("dob").value;
+    if (v === "") return setError("dob", "dobError", "Date of birth is required.");
+    if (new Date(v) > new Date()) return setError("dob", "dobError", "Date of birth cannot be in the future.");
+    return setError("dob", "dobError", "");
+  }
+
+  function validateMobile() {
+    const v = document.getElementById("mobile").value.trim();
+    if (v === "") return setError("mobile", "mobileError", "Mobile number is required.");
+    if (!/^\d{10}$/.test(v)) return setError("mobile", "mobileError", "Mobile number must contain exactly 10 digits.");
+    return setError("mobile", "mobileError", "");
+  }
+
+  function validatePassword() {
+    const v = document.getElementById("password").value;
+    if (v.length < 8) return setError("password", "passwordError", "Password must be at least 8 characters long.");
+    return setError("password", "passwordError", "");
+  }
+
+  function validateCertificate() {
+    const f = document.getElementById("certificate").files;
+    if (f.length === 0) return setError("certificate", "certError", "Please upload your certificate.");
+    return setError("certificate", "certError", "");
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const success = document.getElementById("successMessage");
+    success.style.display = "none";
+
+    const results = [
+      validateName(),
+      validateDob(),
+      validateMobile(),
+      validatePassword(),
+      validateCertificate()
+    ];
+
+    if (results.every(Boolean)) {
+      success.style.display = "block";
+      form.reset();
+    }
+  });
+</script>
+</body>
+</html>
